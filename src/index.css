@@ -19,12 +19,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 
 html {
-  font-size: 18px;
+  font-size: 14.4px;
 }
 
 @media (min-width: 768px) {
   html {
-    font-size: 19px;
+    font-size: 15.2px;
   }
 }
 
