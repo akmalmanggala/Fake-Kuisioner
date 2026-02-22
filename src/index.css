@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+@theme {
+  --color-sage-50: #f1f8f3;
+  --color-sage-100: #e1f0e6;
+  --color-sage-200: #c7e2d1;
+  --color-sage-300: #a7c9b2;
+  --color-sage-400: #7fa88e;
+  --color-sage-500: #5f8b6d;
+  --color-sage-600: #4b7058;
+  --color-sage-700: #3a5a47;
+  --color-sage-800: #2f4638;
+  --color-sage-900: #273c31;
+  --color-sage-950: #17231d;
+  
+  --font-serif: "Playfair Display", serif;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+
+html {
+  font-size: 18px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 19px;
+  }
+}
+
+body {
+  @apply bg-sage-50 text-sage-900 overflow-x-hidden;
+  font-family: 'Inter', sans-serif;
+}
+
+.font-serif {
+  font-family: 'Playfair Display', serif;
+}
