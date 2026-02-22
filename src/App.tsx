@@ -10,6 +10,42 @@ import confetti from 'canvas-confetti';
 
 // --- Components ---
 
+const isVideoSrc = (src: string) => /\.(mp4|webm|mov)$/i.test(src);
+
+// Optional perf helper:
+// If you provide smaller thumbnail files next to the originals using the naming
+// pattern `name.thumb.jpg` (or .png/.jpeg), the timeline will prefer those.
+// It automatically falls back to the original file if the thumb doesn't exist.
+const toThumbSrc = (src: string) => {
+  if (isVideoSrc(src)) return src;
+  return src.replace(/(\.[a-z0-9]+)$/i, '.thumb$1');
+};
+
+const TimelineImageThumb: React.FC<{ src: string; className: string }> = ({ src, className }) => {
+  const [resolvedSrc, setResolvedSrc] = useState(() => toThumbSrc(src));
+
+  useEffect(() => {
+    setResolvedSrc(toThumbSrc(src));
+  }, [src]);
+
+  return (
+    <img
+      src={resolvedSrc}
+      alt=""
+      width={128}
+      height={128}
+      loading="lazy"
+      decoding="async"
+      fetchPriority="low"
+      className={className}
+      onError={() => {
+        // If the thumbnail doesn't exist, fall back to the original.
+        if (resolvedSrc !== src) setResolvedSrc(src);
+      }}
+    />
+  );
+};
+
 const ScratchCard: React.FC<{ onComplete: () => void; children: React.ReactNode }> = ({ onComplete, children }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDone, setIsDone] = useState(false);
@@ -829,7 +865,7 @@ export default function App() {
               </button>
 
               <div className="p-4 md:p-6 flex items-center justify-center bg-sage-100/40">
-                {/\.(mp4|webm|mov)$/i.test(lightboxSrc) ? (
+                {isVideoSrc(lightboxSrc) ? (
                   <video
                     src={lightboxSrc}
                     controls
@@ -841,6 +877,8 @@ export default function App() {
                   <img
                     src={lightboxSrc}
                     alt=""
+                    decoding="async"
+                    fetchPriority="high"
                     className="max-h-[75vh] w-auto rounded-2xl border border-sage-200 bg-white"
                   />
                 )}
@@ -1016,7 +1054,10 @@ export default function App() {
                         <Icon size={16} fill="currentColor" />
                       </div>
 
-                      <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-6 rounded-3xl border border-sage-100 bg-white shadow-md">
+                      <div
+                        className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-6 rounded-3xl border border-sage-100 bg-white shadow-md"
+                        style={{ contentVisibility: 'auto' } as React.CSSProperties}
+                      >
                         <div className="flex items-center justify-between space-x-2 mb-2">
                           <div className="font-bold text-sage-800 text-base md:text-lg">{item.date}</div>
                         </div>
@@ -1036,7 +1077,7 @@ export default function App() {
                                   setLightboxSrc(src);
                                 }}
                               >
-                                {/\.(mp4|webm|mov)$/i.test(src) ? (
+                                {isVideoSrc(src) ? (
                                   <video
                                     src={src}
                                     muted
@@ -1045,10 +1086,8 @@ export default function App() {
                                     className="h-28 w-28 md:h-32 md:w-32 object-cover rounded-2xl border border-sage-200 shadow-sm hover:shadow transition-shadow"
                                   />
                                 ) : (
-                                  <img
+                                  <TimelineImageThumb
                                     src={src}
-                                    alt=""
-                                    loading="lazy"
                                     className="h-28 w-28 md:h-32 md:w-32 object-cover rounded-2xl border border-sage-200 shadow-sm hover:shadow transition-shadow"
                                   />
                                 )}
