@@ -63,6 +63,9 @@ const ScratchCard: React.FC<{ onComplete: () => void; children: React.ReactNode 
       if (rect) {
         canvas.width = rect.width;
         canvas.height = rect.height;
+
+        // Ensure we're drawing the opaque cover (not erasing).
+        ctx.globalCompositeOperation = 'source-over';
         
         // Fill with Sage Green
         ctx.fillStyle = '#b2c2b2'; // sage-300
@@ -133,13 +136,36 @@ const ScratchCard: React.FC<{ onComplete: () => void; children: React.ReactNode 
   const handleEnd = () => setIsDrawing(false);
 
   return (
-    <div className="relative w-full max-w-md aspect-[3/4] mx-auto rounded-2xl overflow-hidden shadow-xl bg-white border-4 border-sage-200">
-      <div className="absolute inset-0 p-8 flex flex-col justify-center items-center text-center">
+    <div className="relative w-full max-w-md md:max-w-lg h-[68vh] md:h-[72vh] max-h-[640px] mx-auto rounded-3xl overflow-hidden shadow-xl bg-white border-4 border-sage-200">
+      <div className="absolute inset-0 bg-gradient-to-b from-white via-sage-50/60 to-white" aria-hidden="true" />
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <div className="absolute -top-10 -left-10 text-sage-200">
+          <Heart size={140} className="opacity-50 rotate-12" fill="currentColor" />
+        </div>
+        <div className="absolute -top-8 -right-8 text-sage-200">
+          <Star size={120} className="opacity-40 -rotate-12" fill="currentColor" />
+        </div>
+        <div className="absolute -bottom-12 -left-8 text-sage-200">
+          <Star size={130} className="opacity-35 rotate-6" fill="currentColor" />
+        </div>
+        <div className="absolute -bottom-10 -right-10 text-sage-200">
+          <Heart size={150} className="opacity-40 -rotate-6" fill="currentColor" />
+        </div>
+        <div className="absolute top-1/2 left-6 -translate-y-1/2 text-sage-200 hidden md:block">
+          <Cat size={110} className="opacity-20 rotate-6" />
+        </div>
+        <div className="absolute top-1/2 right-6 -translate-y-1/2 text-sage-200 hidden md:block">
+          <Cat size={110} className="opacity-20 -rotate-6" />
+        </div>
+        <div className="absolute inset-4 rounded-[1.5rem] border border-dashed border-sage-200/80" />
+      </div>
+
+      <div className="absolute inset-0 z-10 p-6 md:p-8 flex flex-col justify-center items-center text-center">
         {children}
       </div>
       <canvas
         ref={canvasRef}
-        className={`absolute inset-0 cursor-crosshair transition-opacity duration-1000 ${isDone ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+        className={`absolute inset-0 z-20 cursor-crosshair transition-opacity duration-1000 ${isDone ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
         onMouseDown={handleStart}
         onMouseMove={handleMove}
         onMouseUp={handleEnd}
@@ -916,6 +942,10 @@ export default function App() {
                       <div className="font-semibold text-zinc-900 mb-1">Catatan</div>
                       <div>Jawaban kamu tidak disimpan dan tidak dibagikan.</div>
                     </div>
+                    <div className="rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-left text-sm text-zinc-700 mb-6">
+                      <div className="font-semibold text-zinc-900 mb-1">Sebelum mulai</div>
+                      <div>Pastikan sinyal kamu stabil, dan nyalakan volume di laptop biar lebih seru</div>
+                    </div>
                     <button
                       onClick={() => setSurveyStep(1)}
                       className="w-full bg-zinc-900 text-white p-4 rounded-xl font-bold shadow-lg hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2"
@@ -1312,7 +1342,7 @@ export default function App() {
             exit="exit"
             className="flex flex-col items-center text-center max-w-2xl w-full"
           >
-            <h2 className="text-3xl md:text-4xl font-serif font-bold text-sage-800 mb-4 flex items-center gap-3">
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-sage-800 mb-2 flex items-center gap-3">
               Kue ulang tahun buat sayangkuu
             </h2>
             <p className="text-lg md:text-xl text-sage-600">
@@ -1323,7 +1353,7 @@ export default function App() {
               <BirthdayCake lit={candlesLit} />
             </div>
 
-            <div className="mt-6 flex flex-col items-center gap-4">
+            <div className="flex flex-col items-center gap-4">
               {candlesLit ? (
                 <button
                   type="button"
@@ -1393,7 +1423,7 @@ export default function App() {
             exit="exit"
             className="flex flex-col items-center text-center w-full"
           >
-            <h2 className="text-3xl md:text-4xl font-serif font-bold text-sage-800 mb-8 flex items-center gap-3">
+            <h2 className="text-2xl md:text-3xl font-serif font-bold text-sage-800 mb-5 flex items-center gap-3">
               Buka ini juga sayanggg
             </h2>
 
@@ -1405,12 +1435,22 @@ export default function App() {
                 colors: ['#b2c2b2', '#f4f7f4', '#708270', '#ff0000']
               });
             }}>
-              <div className="space-y-2">
-                <p className="text-xl md:text-2xl font-serif leading-relaxed text-sage-800">
-                  "Selamat bertambah umur sayangku, selamat sudah memasuki kepala dua (20 tahun), semoga semua yang kamu harapkan dan inginkan dapat segera terkabul. Semoga kita juga bisa terus bersama-sama melewati hari-hari ke depan dengan penuh cinta, tawa, dan kebahagiaan. Aku bersyukur banget bisa dipertemukan dengan kamu, terima kasih sudah jadi kamu yang luar biasa ini sayangg, i love you so much, much, muachh💚💚💚"
+              <div className="space-y-3">
+                <div className="flex items-center justify-center gap-3 text-sage-400" aria-hidden="true">
+                  <Star size={18} className="opacity-80" fill="currentColor" />
+                  <Heart size={18} className="opacity-80" fill="currentColor" />
+                  <Star size={18} className="opacity-80" fill="currentColor" />
+                </div>
+                <p className="text-base md:text-lg font-serif leading-relaxed text-sage-800">
+                  "Selamat bertambah umur sayangku, selamat sudah memasuki kepala dua (20 tahun), semoga semua yang kamu harapkan dan inginkan dapat segera terkabul. Semoga kita juga bisa terus bersama-sama melewati hari-hari ke depan dengan penuh cinta, tawa, dan kebahagiaan. Sebelumnya aku mau minta maaf jika selama aku pacaran sama kamu ini banyak salahnya, karena ini pacaran pertama aku jadi mungkin aku banyak kurang peka, banyak nyakitin kamu, aku kadang juga bingung harus gimana, tapi aku minta bantuannya ya sayangg. Aku bersyukur banget bisa dipertemukan dengan kamu, terima kasih sudah jadi kamu yang luar biasa ini. Selamat ulang tahun sayangg, i love you so much, much, muachh💚💚💚"
                 </p>
                 <div className="text-sage-500 font-medium">
                   - Dari pacarmu yang paling sayang kamu💚
+                </div>
+                <div className="flex items-center justify-center gap-2 text-sage-300" aria-hidden="true">
+                  <Heart size={16} className="opacity-70" fill="currentColor" />
+                  <Heart size={12} className="opacity-60" fill="currentColor" />
+                  <Heart size={16} className="opacity-70" fill="currentColor" />
                 </div>
               </div>
             </ScratchCard>
