@@ -21,7 +21,23 @@ const toThumbSrc = (src: string) => {
   return src.replace(/(\.[a-z0-9]+)$/i, '.thumb$1');
 };
 
-const TimelineImageThumb: React.FC<{ src: string; className: string }> = ({ src, className }) => {
+const TimelineImageThumb: React.FC<{
+  src: string;
+  className: string;
+  width?: number;
+  height?: number;
+  loading?: React.ImgHTMLAttributes<HTMLImageElement>['loading'];
+  decoding?: React.ImgHTMLAttributes<HTMLImageElement>['decoding'];
+  fetchPriority?: React.ImgHTMLAttributes<HTMLImageElement>['fetchPriority'];
+}> = ({
+  src,
+  className,
+  width = 128,
+  height = 128,
+  loading = 'lazy',
+  decoding = 'async',
+  fetchPriority = 'low',
+}) => {
   const [resolvedSrc, setResolvedSrc] = useState(() => toThumbSrc(src));
 
   useEffect(() => {
@@ -32,11 +48,11 @@ const TimelineImageThumb: React.FC<{ src: string; className: string }> = ({ src,
     <img
       src={resolvedSrc}
       alt=""
-      width={128}
-      height={128}
-      loading="lazy"
-      decoding="async"
-      fetchPriority="low"
+      width={width}
+      height={height}
+      loading={loading}
+      decoding={decoding}
+      fetchPriority={fetchPriority}
       className={className}
       onError={() => {
         // If the thumbnail doesn't exist, fall back to the original.
@@ -900,9 +916,11 @@ export default function App() {
                     className="max-h-[75vh] w-full rounded-2xl border border-sage-200 bg-black"
                   />
                 ) : (
-                  <img
+                  <TimelineImageThumb
                     src={lightboxSrc}
-                    alt=""
+                    width={1400}
+                    height={900}
+                    loading="eager"
                     decoding="async"
                     fetchPriority="high"
                     className="max-h-[75vh] w-auto rounded-2xl border border-sage-200 bg-white"
